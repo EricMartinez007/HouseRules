@@ -8,8 +8,10 @@ public class MappingProfile : Profile
 {
     public MappingProfile()
     {
-        CreateMap<UserProfile, UserProfileDTO>();
-        CreateMap<UserProfileDTO, UserProfile>();
+        CreateMap<UserProfile, UserProfileDTO>()
+            .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.IdentityUser.Email))
+            .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.IdentityUser.UserName))
+            .ReverseMap();
 
         CreateMap<Chore, ChoreDTO>().ReverseMap();
         CreateMap<ChoreAssignment, ChoreAssignmentDTO>().ReverseMap();
