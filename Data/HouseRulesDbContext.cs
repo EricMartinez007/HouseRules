@@ -8,6 +8,9 @@ public class HouseRulesDbContext : IdentityDbContext<IdentityUser>
 {
     private readonly IConfiguration _configuration;
     public DbSet<UserProfile> UserProfiles { get; set; }
+    public DbSet<Chore> Chores { get; set; }
+    public DbSet<ChoreAssignment> ChoreAssignments { get; set; }
+    public DbSet<ChoreCompletion> ChoreCompletions { get; set; }
 
     public HouseRulesDbContext(DbContextOptions<HouseRulesDbContext> context, IConfiguration config) : base(context)
     {
@@ -47,6 +50,21 @@ public class HouseRulesDbContext : IdentityDbContext<IdentityUser>
             Address = "101 Main Street",
         });
 
-        
+        modelBuilder.Entity<Chore>().HasData(
+            new Chore { Id = 1, Name = "Swab the Deck", Difficulty = 1, ChoreFrequencyDays = 1 },
+            new Chore { Id = 2, Name = "Cook the Crew's Feast", Difficulty = 4, ChoreFrequencyDays = 1 },
+            new Chore { Id = 3, Name = "Chart the Next Island", Difficulty = 3, ChoreFrequencyDays = 3 },
+            new Chore { Id = 4, Name = "Repair the Thousand Sunny", Difficulty = 5, ChoreFrequencyDays = 14 },
+            new Chore { Id = 5, Name = "Sharpen the Swords", Difficulty = 2, ChoreFrequencyDays = 7 }
+        );
+
+        modelBuilder.Entity<ChoreAssignment>().HasData(
+            new ChoreAssignment { Id = 1, UserProfileId = 1, ChoreId = 1 },
+            new ChoreAssignment { Id = 2, UserProfileId = 1, ChoreId = 4 }
+        );
+
+        modelBuilder.Entity<ChoreCompletion>().HasData(
+            new ChoreCompletion { Id = 1, UserProfileId = 1, ChoreId = 1, CompletedOn = new DateTime(2026, 6, 17) }
+        );
     }
 }

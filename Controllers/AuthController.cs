@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -18,11 +19,13 @@ public class AuthController : ControllerBase
 {
     private HouseRulesDbContext _dbContext;
     private UserManager<IdentityUser> _userManager;
+    private IMapper _mapper;
 
-    public AuthController(HouseRulesDbContext context, UserManager<IdentityUser> userManager)
+    public AuthController(HouseRulesDbContext context, UserManager<IdentityUser> userManager, IMapper mapper)
     {
         _dbContext = context;
         _userManager = userManager;
+        _mapper = mapper;
     }
 
     [HttpPost("login")]
@@ -102,17 +105,10 @@ public class AuthController : ControllerBase
         var roles = User.FindAll(ClaimTypes.Role).Select(r => r.Value).ToList();
         if (profile != null)
         {
-            var userDto = new UserProfileDTO
-            {
-                Id = profile.Id,
-                FirstName = profile.FirstName,
-                LastName = profile.LastName,
-                Address = profile.Address,
-                IdentityUserId = identityUserId,
-                UserName = User.FindFirstValue(ClaimTypes.Name),
-                Email = User.FindFirstValue(ClaimTypes.Email),
-                Roles = roles
-            };
+            var userDto = _mapper.Map<UserProfileDTO>(profile);
+            userDto.UserName = User.FindFirstValue(ClaimTypes.Name);
+            userDto.Email = User.FindFirstValue(ClaimTypes.Email);
+            userDto.Roles = roles;
 
             return Ok(userDto);
         }
