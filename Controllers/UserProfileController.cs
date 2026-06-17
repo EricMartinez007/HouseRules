@@ -6,6 +6,7 @@ using HouseRules.Models.DTOs;
 using Microsoft.EntityFrameworkCore;
 using HouseRules.Models;
 using Microsoft.AspNetCore.Identity;
+using System.Security.Cryptography;
 
 namespace HouseRules.Controllers;
 
@@ -80,5 +81,24 @@ public class UserProfileController : ControllerBase
         _dbContext.UserRoles.Remove(userRole!);
         _dbContext.SaveChanges();
         return NoContent();
+    }
+
+    [HttpGet("userprofile/{id}")]
+    [Authorize]
+    public IActionResult GetUserProfile(int id)
+    {
+        var userProfile = _dbContext
+            .UserProfiles
+            .Include(up => up.ChoreAssignments)
+            .ThenInclude(ca => ca.Chore)
+            .Include(up => up.ChoreCompletions)
+            .ThenInclude(cc => cc.Chore)
+            .SingleOrDefault(up => up.Id == id);
+        if (userProfile == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(_mapper.Map<UserProfileDTO>(userProfile));
     }
 }
