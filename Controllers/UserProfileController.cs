@@ -94,6 +94,7 @@ public class UserProfileController : ControllerBase
             .Include(up => up.ChoreCompletions)
             .ThenInclude(cc => cc.Chore)
             .SingleOrDefault(up => up.Id == id);
+            
         if (userProfile == null)
         {
             return NotFound();
