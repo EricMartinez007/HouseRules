@@ -12,11 +12,11 @@ public class UserProfileDTO
     public string? Email { get; set; }
 
     public string? UserName { get; set; }
-    public List<string> Roles { get; set; }
+    public List<string>? Roles { get; set; }
 
-    public string IdentityUserId { get; set; }
+    public string? IdentityUserId { get; set; }
 
-    public IdentityUser IdentityUser { get; set; }
-    public List<ChoreAssignmentDTO> ChoreAssignments { get; set; }
-    public List<ChoreCompletionDTO> ChoreCompletions { get; set; }
+    public IdentityUser? IdentityUser { get; set; }
+    public List<ChoreAssignmentDTO>? ChoreAssignments { get; set; }
+    public List<ChoreCompletionDTO>? ChoreCompletions { get; set; }
 }
