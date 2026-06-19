@@ -1,15 +1,18 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Card, CardBody, CardHeader, ListGroup, ListGroupItem } from "reactstrap";
-import { getChore } from "../../managers/choreManager";
+import { Card, CardBody, CardHeader, Input, ListGroup, ListGroupItem } from "reactstrap";
+import { assignChore, getChore, unassignChore } from "../../managers/choreManager";
+import { getProfiles } from "../../managers/userProfileManager";
 
 
 export default function ChoreDetails() {
   const { id } = useParams();
   const [chore, setChore] = useState(null);
+  const [users, setUsers] = useState([]);
 
   useEffect(() => {
     getChore(id).then(setChore);
+    getProfiles().then(setUsers);
   }, [id]);
 
   if (!chore) return null;
@@ -20,6 +23,16 @@ export default function ChoreDetails() {
         )
     : null;
 
+    const handleAssignmentChange = (e) => {
+        const userId = parseInt(e.target.value);
+        if (e.target.checked)
+        {
+            assignChore(id, userId).then(() => getChore(id).then(setChore));
+        }
+        else{
+            unassignChore(id, userId).then(() => getChore(id).then(setChore));
+        }
+    }
 
   return (
     <div className="container mt-4">
@@ -42,15 +55,19 @@ export default function ChoreDetails() {
       <Card className="mb-4">
         <CardHeader>Current Assignees</CardHeader>
         <CardBody>
-          {chore.choreAssignments?.length > 0 ? (
             <ListGroup flush>
-                {chore.choreAssignments.map((a) => (
-                    <ListGroupItem key={a.id}>{a.userProfile.firstName} {a.userProfile.lastName}</ListGroupItem>
+                {users.map((u) => (
+                <ListGroupItem key={u.id}>
+                    <Input
+                    type="checkbox"
+                    value={u.id}
+                    checked={chore.choreAssignments?.some(a => a.userProfileId === u.id)}
+                    onChange={handleAssignmentChange}
+                    />
+                    {" "}{u.firstName} {u.lastName}
+                </ListGroupItem>
                 ))}
             </ListGroup>
-          ) : (
-            <p className="text-muted mb-0">No assignees.</p>
-          )}
         </CardBody>
       </Card>
 
