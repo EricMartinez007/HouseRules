@@ -5,8 +5,9 @@ import { createChore } from "../../managers/choreManager";
 
 export default function CreateChore() {
   const [name, setName] = useState("");
-  const [difficulty , setDifficulty] = useState(0);
-  const [choreFrequencyDays , setFrequency] = useState(0);
+  const [difficulty , setDifficulty] = useState(1);
+  const [choreFrequencyDays , setFrequency] = useState(1);
+  const [errors, setErrors] = useState({})
 
   const navigate = useNavigate();
 
@@ -18,8 +19,12 @@ export default function CreateChore() {
       choreFrequencyDays
     };
 
-    createChore(newChore).then(() => {
-      navigate("/chores");
+    createChore(newChore).then((res) => {
+        if (res.errors) {
+            setErrors(res.errors);
+        } else {
+            navigate("/chores");
+        }
     });
   };
 
@@ -41,6 +46,8 @@ export default function CreateChore() {
           <Label>Difficulty</Label>
           <Input
             type="number"
+            min={1}
+            max={5}
             value={difficulty}
             onChange={(e) => {
               setDifficulty(parseInt(e.target.value));
@@ -51,12 +58,21 @@ export default function CreateChore() {
           <Label>Frequency</Label>
           <Input
             type="number"
+            min={1}
+            max={14}
             value={choreFrequencyDays}
             onChange={(e) => {
               setFrequency(parseInt(e.target.value));
             }}
           />
         </FormGroup>
+         <div style={{ color: "red" }}>
+            {Object.keys(errors).map((key) => (
+                <p key={key}>
+                {key}: {errors[key].join(",")}
+                </p>
+            ))}
+        </div>
         <Button onClick={handleSubmit} color="primary">
           Submit
         </Button>
